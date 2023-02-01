@@ -4,6 +4,8 @@ Nucleotide .fasta files and .gff3 files should have the same names, protein .fas
 will receive the same name:
 Abc123.fasta (n) + Abc123.gff3 -> Abc123.fasta (p)
 
+Parameters
+----------
 gdir : str
     Location of the .gff3 files
 fdir : str
@@ -22,6 +24,8 @@ def gffread(gdir : str, fdir : str, pdir : str):
     This uses the program gffread, tested on version v0.12.7
     More info on gffread: https://github.com/gpertea/gffread
 
+    Parameters
+    ----------
     gdir : str
         Location of the .gff3 files
     fdir : str
@@ -67,15 +71,14 @@ if __name__ == '__main__':
         print("pdir not specified")
         exit()
 
-    gdir = cdir + args.gdir
-    fdir = cdir + args.fdir
-    pdir = cdir + args.pdir
-    if not gdir.endswith("/"):
-        gdir += "/"
-    if not fdir.endswith("/"):
-        fdir += "/"
-    if not pdir.endswith("/"):
-        pdir += "/"
+    gdir = args.gdir
+    fdir = args.fdir
+    pdir = args.pdir
+
+    assert os.path.exists(gdir), "gdir could not be found"
+    assert os.path.exists(fdir), "fdir could not be found"
+    assert os.path.exists(pdir), "pdir could not be found"
+
     print(f"Location of .gff files: {gdir}")
     print(f"Location of .fasta files (nucleotide sequences): {fdir}")
     print(f"Location for .fasta files (protein sequences): {pdir}")

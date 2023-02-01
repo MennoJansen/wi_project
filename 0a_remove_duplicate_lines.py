@@ -1,5 +1,7 @@
 """Small script that removes duplicate lines from a file
 
+Parameters
+----------
 file : str
     Path to file with duplicate lines
 
@@ -11,6 +13,8 @@ from collections import OrderedDict
 def remove_duplicate_lines(file : str):
     """Removes duplicate lines from file and overwrites same file
 
+    Parameters
+    ----------
     file : str
         Filepath of file with duplicate lines
     
@@ -34,10 +38,9 @@ if __name__ == "__main__":
         print("file not specified")
         exit()
 
-    file = cwd + "/" + args.file
-
-    if not file.endswith("/"):
-        file += "/"
+    file = args.file
+    assert os.path.exists(file), "file could not be found"
+    
     print(f"Removing duplicate lines from: {file}")
     remove_duplicate_lines(file)
     print("Done! Exiting...")
