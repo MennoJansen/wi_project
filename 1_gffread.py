@@ -12,7 +12,6 @@ pdir : str
     New location of resulting protein sequences in .fasta format
 """
 
-import sys
 import os
 import subprocess
 import argparse
