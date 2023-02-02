@@ -33,7 +33,6 @@ if __name__ == "__main__":
 
     args = parser.parse_args()
 
-    cwd = os.getcwd()
     if args.file is None:
         print("file not specified")
         exit()
