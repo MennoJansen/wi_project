@@ -90,6 +90,33 @@ def get_location(gff_output, gene_name):
     #print(fasta_header)
     return fasta_header, orientation
 
+def get_location_gff(gff_output, gene_name):
+    scaffold, start, end, orientation= '0', '0', '0', '0'
+    first = True
+    for line in gff_output:
+        if gene_name in line:
+            if first == True:
+                scaffold = line.split()[0]
+                start = line.split()[3]
+                orientation = line.split()[6]
+                first = False
+            else:
+                end = line.split()[4]
+        elif not gene_name in line and first == False:
+            break
+    
+    if int(end) < int(start):
+        new_end = start
+        new_start = end
+        start = new_start
+        end = new_end
+    
+    if gene_name != "not_found" and start == '0':
+        logging.warning("WARNING!")
+    start = str(int(start) - 1)
+
+    return scaffold, orientation, start, end
+
 def get_sequence(g_fasta_output, fasta_header, output_file, orientation, species):
     for i in range(0, len(g_fasta_output) - 1, 2):
         if g_fasta_output[i].strip() == fasta_header:
@@ -104,31 +131,25 @@ def get_sequence(g_fasta_output, fasta_header, output_file, orientation, species
                 complement = ''
                 tab = str.maketrans('ACTG', 'TGAC')
                 output_file.write(g_fasta_output[i + 1].upper().translate(tab).strip()[::-1] + '\n')
-                '''
-                seq = g_fasta_output[i + 1].strip()
-                seq = seq.replace('A', 't').replace('C', 'g').replace('T', 'a').replace('G', 'c')
-                seq = seq.upper()
-                seq = seq[::-1]
-
-                output_file.write(seq + '\n')
-                '''
-                '''
-                for nucleotide in g_fasta_output[i + 1]:
-                    if nucleotide == 'A':
-                        complement += 'T'
-                    elif nucleotide == 'C':
-                        complement += 'G'
-                    elif nucleotide == 'T':
-                        complement += 'A'
-                    elif nucleotide == 'G':
-                        complement += 'C'
-                reverse_complement = complement[::-1]
-                output_file.write(reverse_complement.strip() + '\n')
-                '''
                 return
             else:
                 print('other orientation than "+" and "-"')
     
+def get_sequence_gff(g_fasta_output, output_file, scaffold, orientation, start, end, species):
+    next_line = False
+    for line in g_fasta_output:
+        if next_line:
+            seq = line[int(start):int(end)]
+            if orientation == '+':
+                output_file.write(seq.upper().strip() + '\n')
+                return
+            else:
+                tab = str.maketrans('ACTG', 'TGAC')
+                output_file.write(seq.upper().translate(tab).strip() + '\n')
+                return
+        if scaffold in line:
+            next_line = True
+            output_file.write(f">{species}\n")
 
 def create_fasta_per_gene(gene):
     global counter, s_counter
@@ -140,13 +161,13 @@ def create_fasta_per_gene(gene):
         with open(hmmsearch_path + hmmsearch_file, 'rt') as hmmsearch_output:
             #species = hmmsearch_file.split('_genes_aa_')[1].split('.txt')[0]
             species = p.match(hmmsearch_file).group(1)
-            '''
-            if "Clasph" in species:
+            
+            if "Trigu1" in species:
                 print("Found it!")
                 print("breakpoint")
             else:
                 continue
-            '''
+            
             
             #logging.INFO("\rRunning for species: " + species + " (" + str(s_counter) + "/" + str(s_counter_end) + ")                ", end='')
             logging.info("Running for species %s (%s/%s)", species, s_counter, s_counter_end)
@@ -159,20 +180,36 @@ def create_fasta_per_gene(gene):
                     output_file.write('>' + species + '\n\n')
                     output_file.close()
 
+                if os.path.exists(gff_path + species + ".gff3"):
                 # Retrieve location info of gene
-                with open(gff_path + species + ".gff3", 'rt') as gff_output:
-                    get_loc = get_location(gff_output, gene_name)
-                    fasta_header = get_loc[0]
-                    orientation = get_loc[1]
+                    with open(gff_path + species + ".gff3", 'rt') as gff_output:
+                        get_loc = get_location(gff_output, gene_name)
+                        fasta_header = get_loc[0]
+                        orientation = get_loc[1]
 
-                    # Extract sequence
-                    with open(g_fasta_path + species + "_nucl.fasta", 'rt') as g_fasta_output :
-                        g_fasta_output = g_fasta_output.readlines()                                      
-                        output_file = open(output_path + gene + '.txt', 'a')
-                        get_sequence(g_fasta_output, fasta_header, output_file, orientation, species)
-                        output_file.close()
-#create_fasta_per_gene("408391at4751")
+                        # Extract sequence
+                        with open(g_fasta_path + species + "_nucl.fasta", 'rt') as g_fasta_output :
+                            g_fasta_output = g_fasta_output.readlines()                                      
+                            output_file = open(output_path + gene + '.txt', 'a')
+                            get_sequence(g_fasta_output, fasta_header, output_file, orientation, species)
+                            output_file.close()
+
+                elif os.path.exists(gff_path + species + ".gff"):
+                    gene_name = gene_name.split("|")[3]
+                    gene_name = gene_name[:-1]
+                    with open(gff_path + species + ".gff", 'rt') as gff_output:
+                        get_loc = get_location_gff(gff_output, gene_name)
+                        scaffold, orientation, start, end = get_loc[0], get_loc[1], get_loc[2], get_loc[3]
+
+                        g_fasta_path = "/drive/fasta/"
+                        with open(g_fasta_path + species + ".fasta") as g_fasta_output:
+                            g_fasta_output = g_fasta_output.readlines()
+                            output_file = open(output_path + gene + '.txt', 'a')
+                            get_sequence_gff(g_fasta_output, output_file, scaffold, orientation, start, end, species)
+                            output_file.close()
+                
+create_fasta_per_gene("408391at4751")
                                         
-for gene in genes:
-    gene = gene.strip()
-    create_fasta_per_gene(gene)
+#for gene in genes:
+#    gene = gene.strip()
+#    create_fasta_per_gene(gene)
