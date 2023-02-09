@@ -9,7 +9,8 @@ input : str
 import argparse
 import os
 
-def process_fasta(i_file : str):
+
+def process_fasta(i_file: str):
     """Method processing .fasta file to move sequences into one line
 
     Parameters
@@ -19,27 +20,32 @@ def process_fasta(i_file : str):
     """
     lines = []
     with open(i_file, encoding="utf-8") as fin:
-        seq = ''
+        seq = ""
         for line in fin.readlines():
-            if line.startswith('>'):
-                if seq != '':
+            if line.startswith(">"):
+                if seq != "":
                     lines.append(f"{seq}\n")
                 lines.append(line)
-                seq = ''
+                seq = ""
             else:
-                seq+= line.strip()
+                seq += line.strip()
 
-    with open(i_file, 'w', encoding="utf-8") as fout:
+    with open(i_file, "w", encoding="utf-8") as fout:
         fout.writelines(lines)
 
-#process_fasta("/drive/fasta/Albra1.fasta")
+
+# process_fasta("/drive/fasta/Albra1.fasta")
 
 if __name__ == "__main__":
     parser = argparse.ArgumentParser()
-    parser.add_argument("-i", "--input", dest="input", 
-                        help="Input directory containing .fasta files needing to be processed")
+    parser.add_argument(
+        "-i",
+        "--input",
+        dest="input",
+        help="Input directory containing .fasta files needing to be processed",
+    )
 
-    args = parser.parse_args()
+    args = parser.parse_args(["-i", "/processing/jgi/nucl/"])
 
     if args.input is None:
         print("Input directory not specified...")
