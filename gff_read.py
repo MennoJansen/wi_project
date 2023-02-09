@@ -18,7 +18,8 @@ import os
 import subprocess
 import argparse
 
-def gffread(gdir : str, fdir : str, pdir : str):
+
+def gffread(g_dir: str, f_dir: str, p_dir: str):
     """Gets the protein sequence using nucleotide sequence and .gff3 file, writes to .fasta file
 
     This uses the program gffread, tested on version v0.12.7
@@ -32,30 +33,53 @@ def gffread(gdir : str, fdir : str, pdir : str):
         Location of the nucleotide fasta sequences in .fasta format
     pdir : str
         New location of resulting protein sequences in .fasta format
-    
     """
-    for root, dirs, files in os.walk(gdir):
-        for file_name in files:
-            if file_name.endswith(".gff3"):
-                name = file_name.split('.')[0]
-                path_to_gff = gdir + file_name 
-                path_to_fasta = fdir + name + ".fasta"
-                path_to_proteins_fasta = pdir + name + "_gff_proteins.fasta"
+    for file in os.scandir(g_dir):
+        file_name = file.name
+        if file_name.endswith(".gff3"):
+            name = file_name.split(".")[0]
+            path_to_gff = g_dir + file_name
+            path_to_fasta = f_dir + name + ".fasta"
+            path_to_proteins_fasta = p_dir + name + "_gff_proteins.fasta"
 
-                #check if file exists as fasta)
-                if os.path.exists(path_to_fasta):
-                    #check if not already done
-                    if not os.path.exists(path_to_proteins_fasta):
-                        subprocess.run(['gffread', '-y', path_to_proteins_fasta, '-g', path_to_fasta, path_to_gff])
-                else:
-                    print("Fasta file for " + name + " does not exist!")
+            # check if file exists as fasta)
+            if os.path.exists(path_to_fasta):
+                # check if not already done
+                if not os.path.exists(path_to_proteins_fasta):
+                    print(f"Running for {path_to_gff}")
+                    subprocess.run(
+                        [
+                            "gffread",
+                            "-y",
+                            path_to_proteins_fasta,
+                            "-g",
+                            path_to_fasta,
+                            path_to_gff,
+                        ],
+                        check=False,
+                    )
+            else:
+                print("Fasta file for " + name + " does not exist!")
 
-if __name__ == '__main__':
+
+if __name__ == "__main__":
     parser = argparse.ArgumentParser()
 
-    parser.add_argument("-g", "--gffdir", dest = "gdir", help="Dir containing .gff3 files")
-    parser.add_argument("-f", "--fastadir", dest = "fdir", help="Dir containing .fasta nucleotide sequences")
-    parser.add_argument("-p", "--proteindir", dest = "pdir", help="Output dir for protein sequences (.fasta)")
+    parser.add_argument(
+        "-g", "--gffdir", dest="gdir", help="Dir containing .gff3 files"
+    )
+    parser.add_argument(
+        "-f",
+        "--fastadir",
+        dest="fdir",
+        help="Dir containing .fasta nucleotide sequences",
+    )
+    parser.add_argument(
+        "-p",
+        "--proteindir",
+        dest="pdir",
+        help="Output dir for protein sequences (.fasta)",
+    )
 
     args = parser.parse_args()
 
@@ -87,4 +111,3 @@ if __name__ == '__main__':
         gffread(gdir, fdir, pdir)
     print("Exiting program...")
     exit()
-

@@ -20,10 +20,10 @@ import os
 import subprocess
 import argparse
 
-#check if file is ok
+# check if file is ok
 def check_file(file):
     """Checks if hmm_output file is finished by looking in the last line for '# [ok]'
-    
+
     Parameters
     ----------
     file : str
@@ -34,26 +34,28 @@ def check_file(file):
     __return__ : bool
         True if hmmsearch was done, otherwise False
     """
-    with open(file, 'rb') as f:
+    with open(file, "rb") as c_file:
         try:
-            f.seek(-2, os.SEEK_END)
-            while f.read(1) != b'\n':
-                f.seek(-2, os.SEEK_CUR)
+            c_file.seek(-2, os.SEEK_END)
+            while c_file.read(1) != b"\n":
+                c_file.seek(-2, os.SEEK_CUR)
         except OSError:
-            f.seek(0)
-        last_line = f.readline().decode()
+            c_file.seek(0)
+        last_line = c_file.readline().decode()
         if last_line.startswith("# [ok]"):
             return True
         return False
 
+
 failed_hmms = []
 
-def hmm_search(pdir : str, hmm_file : str, odir : str):
+
+def hmm_search(i_dir: str, hmm_file: str, o_dir: str):
     """Performs hmmsearch on all .fasta files in [pdir] using [hmm_file] as model
 
     Defaults values include threshold of 1e-10 for the E-value, 12 threads
     TODO Work default values into parameters
-    
+
     Parameters
     ----------
     pdir : str
@@ -66,34 +68,65 @@ def hmm_search(pdir : str, hmm_file : str, odir : str):
     total = 0
     counter = 1
     # Scan for how many files:
-    for files in os.walk(pdir):
+    for files in os.walk(i_dir):
         for file in files[2]:
             if file.endswith(".fasta"):
                 total += 1
-    for files in os.walk(pdir):
+    for files in os.walk(i_dir):
         for file_name in files[2]:
             name = file_name.split(".")[0]
             print(f"hmmsearch for {file_name} ({counter}/{total})")
             counter += 1
-            if not os.path.exists(odir + "hmm_out_" + name + ".txt") or not check_file(odir + "hmm_out_" + name + ".txt"):
-                subprocess.run(["hmmsearch", "--cpu", str(12), "-E", str(0.0000000001), "--tblout", odir + "hmm_out_" + name + ".txt", hmm_file, pdir + file_name], stdout=subprocess.DEVNULL)
-            if not os.path.exists(odir + "hmm_out_" + name + ".txt"):
+            output_file = f"{o_dir}hmm_out_{name}_gff_proteins.txt"
+            if not os.path.exists(output_file) or not check_file(output_file):
+                subprocess.run(
+                    [
+                        "hmmsearch",
+                        "--cpu",
+                        str(12),
+                        "-E",
+                        str(0.0000000001),
+                        "--tblout",
+                        output_file,
+                        hmm_file,
+                        i_dir + file_name,
+                    ],
+                    stdout=subprocess.DEVNULL,
+                    check=False,
+                )
+            if not os.path.exists(o_dir + "hmm_out_" + name + ".txt"):
                 failed_hmms.append(name)
 
     print("Hmmsearch failed for these entries:")
     print(failed_hmms)
 
+
 if __name__ == "__main__":
     parser = argparse.ArgumentParser()
-    parser.add_argument("-p", "--pdir", dest="pdir", help="Path to folder with protein sequences in .fasta files")
+    parser.add_argument(
+        "-i",
+        "--input",
+        dest="i_dir",
+        help="Path to folder with sequences in .fasta files",
+    )
     parser.add_argument("-m", "--model", dest="hmm_model", help="Filepath to hmm model")
     parser.add_argument("-o", "--out", dest="odir", help="Path to output directory")
 
-    args = parser.parse_args()
+    # args = parser.parse_args()
+    args = parser.parse_args(
+        [
+            "-i",
+            "/processing/jgi/proteins/",
+            "-m",
+            "fungal_models.hmm",
+            "-o",
+            "/processing/jgi/hmm_output4/",
+        ]
+    )
     cdir = os.getcwd()
 
-    if args.pdir is None:
-        print("-p not specified")
+    if args.i_dir is None:
+        print("-i not specified")
         exit()
     if args.hmm_model is None:
         print("-m not specified")
@@ -101,13 +134,12 @@ if __name__ == "__main__":
     if args.odir is None:
         print("-o not specified")
         exit()
-    
-    pdir = args.pdir
-    hmm_model = args.hmm_model
-    odir = args.odir
 
-    assert os.path.exists(pdir), "pdir could not be found"
-    assert os.path.exists(hmm_model), "hmm_model could not be found"
-    assert os.path.exists(odir), "odir could not be found"
-    hmm_search(pdir, hmm_model, odir)
-    
+    __i_dir = args.i_dir
+    __hmm_model = args.hmm_model
+    __odir = args.odir
+
+    assert os.path.exists(__i_dir), "input could not be found"
+    assert os.path.exists(__hmm_model), "hmm_model could not be found"
+    assert os.path.exists(__odir), "odir could not be found"
+    hmm_search(__i_dir, __hmm_model, __odir)
