@@ -5,6 +5,8 @@
     file : str
         path to csv containing all species in column 1 and all respective classes in column 2.
 """
+import argparse
+import os
 
 COLORS = {
     "Eurotiomycetes": "#ce7e00",
@@ -47,3 +49,26 @@ def create_annotation_file(file: str):
                 name = split_line[0]
                 color = COLORS[split_line[1].strip()]
                 ann_file.write(f"{name},{color}\n")
+
+
+if __name__ == "__main__":
+    parser = argparse.ArgumentParser()
+
+    parser.add_argument(
+        "-i",
+        "--input",
+        dest="input",
+        help="Input file in CSV format, containing species in column 1 and classes in column 2",
+    )
+
+    args = parser.parse_args()
+
+    if args.input is None:
+        print("Input file not specified")
+        exit()
+
+    input_file = args.input
+
+    assert os.path.exists(input_file), "Input file could not be found"
+
+    create_annotation_file(input_file)
