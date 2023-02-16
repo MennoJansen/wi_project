@@ -27,8 +27,8 @@ def find_class_names(file: str, output: str, data_file: str):
     tax = {}
     long_name = {}
     names = ""
-    with open(file, encoding="utf-8") as f:
-        for line in f.readlines():
+    with open(file, encoding="utf-8") as file_cont:
+        for line in file_cont.readlines():
             if line.startswith(">"):
                 name = line.split(">")[1].strip()
                 tax[name] = "not_found"
@@ -48,12 +48,12 @@ def find_class_names(file: str, output: str, data_file: str):
 
     res_json = res.json()
 
-    with open(output, "w", encoding="utf-8") as o:
+    with open(output, "w", encoding="utf-8") as output_file:
         for entries in long_name.items():
             key = entries[0]
             try:
                 class_name = res_json[long_name[key]]["class"]["name"]
-                o.write(f"{key},{class_name}\n")
+                output_file.write(f"{key},{class_name}\n")
             except KeyError:
                 print(f"{key}|{long_name[key]} not found in taxonomy...")
 
