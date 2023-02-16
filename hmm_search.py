@@ -77,7 +77,7 @@ def hmm_search(i_dir: str, hmm_file: str, o_dir: str):
             name = file_name.split(".")[0]
             print(f"hmmsearch for {file_name} ({counter}/{total})")
             counter += 1
-            output_file = f"{o_dir}hmm_out_{name}_gff_proteins.txt"
+            output_file = f"{o_dir}hmm_out_{name}.txt"
             if not os.path.exists(output_file) or not check_file(output_file):
                 subprocess.run(
                     [
@@ -120,7 +120,7 @@ if __name__ == "__main__":
             "-m",
             "fungal_models.hmm",
             "-o",
-            "/processing/jgi/hmm_output4/",
+            "/processing/jgi/hmm_output5/",
         ]
     )
     cdir = os.getcwd()
