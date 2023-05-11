@@ -1,0 +1,15 @@
+Notes
+
+AYG1_3
+
+dup_1: Unsupported by bootstrap values in gene tree
+dup_2: Artifact, two strains of single species
+dup_3: Artifact, same sequence
+dup_4: Artifact, two strains of single species
+dup_5: Caused by the fact that Aspber1 is relatively outside the group containing its most closely related species. However, bootstrap values of this group are not supportive.
+dup_6: Same case as dup_5, Aspalli1, Aspalbe1 and Asplep1 should be more related to the group than Aspave1 according to the species tree, which is not the case in the gene tree. Bootstrap value for location of Aspave1 is not supportive, others are.
+dup_7: (22/03 13:00) Seems to be caused by the fact that Talpro1 contains two copies, which are highly diverged within the subclade. Could be a relaxation after duplication, as one of the copies is basically an outgroup to the subclade. Could also be a non-functional ripped gene. (22/30 14:09) Also the case if the diverged sequences are kept out of the reconciliation. The duplication seems to be happening because the group of Talaromyces (Talpro1 etc.) is closely related to a group of aspergillus in the gene tree, while they are quite different according to the species tree. Could be a case of differing evolutionary rates. However, not well supported in gene tree by bootstrap values.
+dup_8:
+hgt_1: Could be hybridization, relaxtion or hgt (within Aspergillus). 
+
+

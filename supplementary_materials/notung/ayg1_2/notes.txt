@@ -1,0 +1,27 @@
+Notes
+
+s1:
+    Three hgts inferred:
+    	top: inferred to ancestor of group (Crypa2, Pilidi1, Crypto1, Crypo1, Cytch1), caused by the fact that no other Sordariomycetes have ayg1.2
+    	middle: inferred from Polci1 to Zasce1, potentially interesting, however no closely related species of Polci1 have a copy of ayg1.2. Only Clafu1 has a copy of ayg1.2, and should theoretically be closer to Zasce1, however position of Clafu1 is not supported by bootstrap in gene tree.
+    	bottom: Caused by the fact that two Eurotiomycetes are located in the gene tree here, HerpoJF2053F_1 and HerpoJF057F_1. These are black yeasts, and in other gene trees show different evolutionnary path compared to other eurotiomycetes. Their location is also not that well supported by bootstrap values.
+
+###
+s2:
+    One hgt inferred, potentially interesting, bootstrap values support hypothesis, relatively closely related with potential transfer origin (within same class and order!)
+    
+s3:
+    Duplication inferred, is artifact from different version numbers of same species + same strain
+
+s4:
+    Duplication inferred, because Exode1 and Capep1 should be more closely related to Exosi1 than they are in the gene tree. Location of Exosi1 not supported by bootstrap values.
+s5:
+    1 HGT, 6 duplications inferred:
+    hgt: Caused by the group of Eurotiomycetes, also black yeasts, present in the ayg1.2 tree. Seem to differ in evolution compared to other Eurotiomycetes.
+    dup_1: Caused by Alikh1, not in the right place, also not supported in either gene tree or species tree.
+    dup_2: Caused by ? (Possible, Linrh1, Rhili1 and Cryan3 are relatively separated within species tree)
+    dup_3: Caused by a group of Dothideomycetes which is in the middle of the Dothideomycetes in the species tree. This group is one end of the duplication, where the other end is two groups surrounding the first group in the species tree. Some closely related species like Lopma1 and Lopnu1 are in different clades in the gene tree.
+    dup_4: ?
+    dup_5: Caused by Aaoar1 and Denna1 being more closely related in gene tree to rest of group compared to Amnli1 and Currey1
+    dup_6: ?
+    dup_4,5,6 are caused I think because of low bootstrap values.

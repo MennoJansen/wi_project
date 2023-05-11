@@ -1,0 +1,57 @@
+Notes:
+
+## s1:
+    4 hgts inferred, 5 duplications inferred:
+        hgt_1 (Acastr1 to XylPMI703_1) and hgt_2 (Acastr1 to ClaNC0930_1), is a Lecanoromycete, a Eurotiomycete and a Leotiomycete in a small clade. They are somewhat supported by bootstrap values to 	be together (UFBoot, not SH-aLRT support), but higher up the tree it is not as well supported. Because of the many different classes, it might just be a hodgepodge of leftover sequences, similar to clade B.
+        hgt_3, caused by the same group as above plus two other Lecanoromycetes, same story
+        hgt_4, caused by the group of Cadsp1, Phimu1, Lepor2, Leptod1, Rhesp1 (g1) being more closely related to the group of Chalo1, Melva1, Hyafin1, MelPMI1271_1, Melbi2, Rhier1 (g2) than the group of Lorma1, Lorju1, Acema1, Phisc1 (g3). In the species tree, g2 should be more closely related with g3 than g1. Bootstrap value of the ancestor of g2 and g3 in the species tree is not that supportive (91.2/100). Also, a couple of internal nodes in the gene tree are not supportive. However, the clade consisting of g1 + g2 in the gene tree is highly supported, so this might still be a candidate for hgt. 
+        dup_1, Artifact, same sequence twice
+        dup_2, caused by the fact that Phisc1 should be closer to Lorju1 and Lorma1 than Acema1. The bootstrap values are supported, but I think that because these species are so closely related, also in the species tree, that it might be an artifact causing a misordering of the group.
+        dup_3, caused by the fact that Bissp1 and Bulin1 are closely related in the gene tree, supported by bootstrap values as well, while Bissp1 should be closer to Oidma1 and Amore1 (not supported). ❗️Potentially interesting.
+        dup_4, caused by group of Hymvar1, Zalva1 and Glalo1 being closely related to Greabi1 and Greab1 in species tree but not in gene tree. Greabi1 and Greab1 are the same species, different strains, could be a differing evolutionnary rate in this species, relaxation etc.
+        dup_5, caused by Greab1 and Greabi1 being far away from Marbr1 when in fact they should be closer together, same reason as previous duplication.
+        
+## s2:
+    2 hgts inferred, 1 duplication inferred:
+ 	hgt_1, caused by Linth1 being grouped with Mictri1 and Micbo1 in gene tree, while Linth1 should be the most basal Sordariomycete. Bootstrap values in gene tree are not supportive.
+ 	hgt_2, caused by Cylol1, Daces1 and Neodi1 being closely related to Truan1 and Pseve2 in gene tree, but being quite far apart in species tree. Bootstrap values of this group is supportive, one internal nodes' bootstrap value is not. Potentially interesting candidate for hgt❗️.
+ 	dup_1, probably caused by the fact that XylPMI506 should be further away from Apimo1 and Artesp1 than Khuory1, unsupported location of XylPMI506 by bootstrap value.
+ 	
+## s3:
+     2 hgts inferred, 3 duplications inferred:
+     	hgt_1, caused by the fact that Eutla1 and Diadis1 should be closer to other species not present in the screenshot, because they are quite basal in the Sordariomycetes. In the gene tree they are placed relatively inside the clade. Upper internal nodes of the gene tree are not supportive.
+     	hgt_2, caused by Hypfra2 and Hyprub1 being closest relatives in gene tree but not in species tree. HyprubER1909_1 should be closer to Hyprub1. Gene tree organization of these species is however not supportive.
+     	dup_1, dup_3, probably caused by the topology of the gene tree not matching the topology of the species tree in the group Hypfus1, Hypcer1, Hypfra2, Hyprub1 etc. Some of the bootstrap values are not supportive in the gene tree either.
+     	dup_2, caused by position of Durrog2 in gene tree not matching position in species tree. Not completely supported in gene tree.
+
+## s4:
+    1 hgt inferred, 1 duplication inferred:
+    	hgt_1, caused by position of Xylcur1, should be close to Xylpal124036_1 but is close to Antleu1. Bootstrap values are supportive of location of Xylcur1, so potential candidate for hgt. Also, part of the same family so more likely to be hgt.❗️
+    	dup_1, probably caused by the group at the top with Xylint1 and Xylni1, should be more inside the subclade than others, such as Entma1. Some upper bootstrap values are not supportive.
+
+## s5:
+    1 hgt inferred, 1 duplication inferred:
+    	hgt_1, seems to be an artifact of rearrangement. In gene tree topology is the same as in species tree. Bootstrap of Xylcur114988_1 and Xylscr1 is not supportive, probably causing rearranging.
+    	dup_1, probably caused by different topology of whole group in gene tree. Only 4/9 internal nodes are supported.
+## s6:
+    1 hgt inferred, 2 duplications inferred:
+    	hgt_1, artifact, not present in species tree but no error?
+    	dup_1, true recent duplication, also confirmed with gene tree
+    	dup_2, probably caused by the fact that ConPMI546 is further away from Conlig1 and Conli1 in gene tree compared to species tree. Topology of Conlig1 and Conli1 subclade is not supported.
+## s7:
+    1 duplication inferred:
+    	dup_1, caused by distance between Bombom1, Apope1, Poddi1, should be closer together without interruptions, but gene tree not well supported.
+## s8:
+    1 hgt inferred, 1 duplication inferred:
+    	hgt_1, caused by Gaegr1 being close to Lasov1 and Lasmin1. Bootstrap values do provide support, although barely. To me it looks more like a case of chance that Gaegr1 is located in this location
+    	dup_1, caused by wrong topology of four species, Colorb1, Colch1, Colhig2, Gloci1. They do have bootstrap support, but I believe it's more of a chance that the wrong order has been selected.
+## s9:
+    7 duplications inferred:
+    	dup_1: caused by the not so clear separation of the Sordariomycetes in the gene tree compared to the species tree.
+    	dup_2: next split under this one is not supported by bootstrap values
+    	dup_3: in gene tree sort of outgroup, in species tree not so much
+    	dup_4: order of topology is different from species tree
+    	dup_5: ""
+    	dup_6: location of group of Mictri1 quite different between species tree and gene tree 
+    	dup_7: top group containing species on both sides of for example Podjug1
+  

@@ -1,0 +1,18 @@
+Notes
+NOTE: Clade A may just be a hodgepodge of different stuff, but the separation is still quite clear between classes...
+
+s1:
+    2 inferred duplications:
+    	dup_1: caused by XylFL2044 being close to the other two in gene tree but not anywhere close in the species tree, also suggests losses in a lot of the other species. Bootstrap supports this ❗️
+    	dup_2: Caused by Hyptru1 being placed close to Dalba1 and Dalcal1, while not so close in species tree. Bootstrap also supports this.❗️
+
+s2:
+    1 inferred hgt, 3 inferred duplications:
+    	hgt_1: possibly true, not too related (same class), good support of bootstrap values, really short branch length for Clafu1, other than that looks promising. High scores when using blastp (score of 3760, %ident=65.7, %Subj.Cov=247.8) ❗️ NOTE: Wrong sequence for Cloaq1, sequence is more than twice the length of normal ayg1 genes.
+    	dup_1: correct recent duplication, Horwer1 (complete genome duplication paper)
+    	dup_2: differing topology with species tree, unsupported by bootstrap values
+    	dup_3: differing topology again, not supported by all bootstrap values
+
+s3:
+    1 inferred duplication:
+    	dup_1: mismatch in topology compared with species tree, quite a few unsupported nodes.
