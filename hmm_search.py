@@ -116,11 +116,11 @@ if __name__ == "__main__":
     args = parser.parse_args(
         [
             "-i",
-            "/processing/jgi/proteins/",
+            "/drive/gff_proteins/",
             "-m",
             "fungal_models.hmm",
             "-o",
-            "/processing/jgi/hmm_output5/",
+            "/drive/hmm_output/",
         ]
     )
     cdir = os.getcwd()

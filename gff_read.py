@@ -81,7 +81,16 @@ if __name__ == "__main__":
         help="Output dir for protein sequences (.fasta)",
     )
 
-    args = parser.parse_args()
+    args = parser.parse_args(
+        [
+            "-g",
+            "/drive/gff/",
+            "-f",
+            "/processing/jgi/nucl/",
+            "-p",
+            "/processing/jgi/proteins/",
+        ]
+    )
 
     cdir = os.getcwd() + "/"
 

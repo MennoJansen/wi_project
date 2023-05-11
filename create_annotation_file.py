@@ -21,10 +21,11 @@ COLORS = {
     "Taph_Incertae": "#7bffbd",
     "Saccharomycetes": "#ecff0e",
     "Neolectomycetes": "#cc00ff",
-    "Pneumocystidomycetes": "#8bc34a",
+    "Pneumocystidomycetes": "#8bc3da",
     "Schizosaccharomycetes": "#fad0c3",
-    "Taphrinomycetes": "#d4cfb",
+    "Taphrinomycetes": "#d4cfb3",
     "Coniocybomycetes": "#bedadc",
+    "None": "#000000",
 }
 
 
@@ -35,7 +36,7 @@ def create_annotation_file(file: str):
     Args:
         file (str): _description_
     """
-    with open("annotation.txt", "w", encoding="utf-8") as ann_file:
+    with open("annotation_yanfang.txt", "w", encoding="utf-8") as ann_file:
         ann_file.write("DATASET_COLORSTRIP\n")
         ann_file.write("SEPARATOR COMMA\n")
         ann_file.write("DATASET_LABEL,classes\n")
@@ -58,10 +59,13 @@ if __name__ == "__main__":
         "-i",
         "--input",
         dest="input",
-        help="Input file in CSV format, containing species in column 1 and classes in column 2",
+        help=(
+            "Input file in CSV format, containing species in column 1 and classes in"
+            " column 2"
+        ),
     )
 
-    args = parser.parse_args()
+    args = parser.parse_args(["-i", "classes_yanfang.txt"])
 
     if args.input is None:
         print("Input file not specified")

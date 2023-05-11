@@ -67,9 +67,9 @@ if __name__ == "__main__":
     args = parser.parse_args(
         [
             "-f",
-            "output_fastas_per_gene_v3/cat_trimal.fasta",
+            "output_fastas_per_gene_yanfang/concat.fasta",
             "-o",
-            "classes.txt",
+            "classes_yanfang.txt",
             "-d",
             "fungi.txt",
         ]

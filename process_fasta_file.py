@@ -29,6 +29,7 @@ def process_fasta(i_file: str):
                 seq = ""
             else:
                 seq += line.strip()
+        lines.append(f"{seq}")
 
     with open(i_file, "w", encoding="utf-8") as fout:
         fout.writelines(lines)
@@ -45,7 +46,7 @@ if __name__ == "__main__":
         help="Input directory containing .fasta files needing to be processed",
     )
 
-    args = parser.parse_args(["-i", "/processing/jgi/nucl/"])
+    args = parser.parse_args(["-i", "/drive/fasta/"])
 
     if args.input is None:
         print("Input directory not specified...")

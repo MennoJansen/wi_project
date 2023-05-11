@@ -1,4 +1,5 @@
-"""Uses output from script process_fasta_file, generates aligned, trimmed .fasta files for each of the BUSCO genes
+"""Uses output from script process_fasta_file, generates aligned,
+trimmed .fasta files for each of the BUSCO genes
 It requires mafft and trimal to be installed on the system
 """
 import os
@@ -23,16 +24,13 @@ def mafft_trimal(path: str):
             print("Running for " + oldfile)
             if not os.path.exists(new_file_mafft):
                 command_1 = (
-                    "mafft --preservecase --auto " + oldfile + " > " + new_file_mafft
+                    f"mafft --preservecase --auto --thread 2 {oldfile} >"
+                    f" {new_file_mafft}"
                 )
                 subprocess.run(command_1, shell=True, check=False)
             if not os.path.exists(new_file_trimal):
                 command_2 = (
-                    "trimal -in "
-                    + new_file_mafft
-                    + " -out "
-                    + new_file_trimal
-                    + " -automated1"
+                    f"trimal -in {new_file_mafft} -out {new_file_trimal} -automated1"
                 )
                 subprocess.run(command_2, shell=True, check=False)
 
@@ -46,7 +44,7 @@ if __name__ == "__main__":
         help="Input path containing all the files resulting from process_fasta_file.py",
     )
 
-    args = parser.parse_args(["-i", "/processing/jgi/output_fastas_per_gene_v3/"])
+    args = parser.parse_args(["-i", "/processing/jgi/output_fastas_per_gene_yanfang/"])
 
     if args.input_path is None:
         print("No input path specified")

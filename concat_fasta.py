@@ -94,11 +94,11 @@ if __name__ == "__main__":
     args = parser.parse_args(
         [
             "-i",
-            "/processing/jgi/output_fastas_per_gene_v3/",
+            "/processing/jgi/output_fastas_per_gene_yanfang/",
             "-o",
-            "/processing/jgi/output_fastas_per_gene_v3/cat_trimal.fasta",
+            "/processing/jgi/output_fastas_per_gene_yanfang/concat.fasta",
             "-s",
-            "/processing/jgi/species.txt",
+            "/processing/jgi/specieslist_1324.txt",
             "-g",
             "/processing/jgi/buscos.txt",
         ]
