@@ -1,11 +1,18 @@
-from collections import defaultdict
-from typing import Self
+"""File for generating locus organization annotation file (iTOL).
+In this file, it only works for the dhn-melanin biosynthetic pathway,
+with the specified paralogues.
 
+    Returns multiple annotation files (iTOL) in specified output directory.
+"""
+from collections import defaultdict
+from ast import literal_eval
 
 LONGEST_DIST = defaultdict(int)
 
 
 class Gene:
+    """Gene class, representing one single gene of one single species"""
+
     def __init_main_gene(self, gene_name) -> str:
         if (
             gene_name == "4thn1"
@@ -65,22 +72,24 @@ class Gene:
         self.distance = self.__init_distance(self.identifier, self.group)
 
     def reverse_group(self):
+        """Reverses order of group of genes and sets a bool to remember it is reversed"""
         self.group.reverse()
         self.swap = True
         self.distance = self.__init_distance(self.identifier, self.group)
 
-    def recount_gene_distance(self):
-        self.distance = self.__init_distance(self.identifier, self.group)
-
 
 class Species:
+    """Species class with name, list of genes and counts of main genes"""
+
     def __init__(self, name: str):
         self.name = name
         self.genes = []
         self.gene_counts = [0, 0, 0, 0]
 
 
-class Annotation_Line:
+class AnnotationLine:
+    """Annotation line class, allows generation of annotation strings"""
+
     def __init__(self, gene: Gene, file: str):
         self.gene = gene
         self.file = file
@@ -88,10 +97,11 @@ class Annotation_Line:
         self.annotation_string = ""
 
     def set_distance_from_left(self, distance: int):
+        """Set distance from left"""
         self.dist_from_left = distance
 
     def generate_annotation_string(self):
-        # length_of_group = len(self.gene.group)
+        """Generates a line for annotation file"""
         first_pos = self.dist_from_left - self.gene.distance
         shapes = [0] * first_pos
         for gene in self.gene.group:
@@ -117,33 +127,20 @@ class Annotation_Line:
             LONGEST_DIST[self.file] = current_dist
 
 
-INFO_DATA2 = []
-DRAWN2 = defaultdict(bool)
-COUNTS = defaultdict(int)
-GENES_LIST = []
-SPECIES_GENES = defaultdict(list)
 SPECIES = {}
 ANNOTATION_LINES = []
 ANNOTATION_FILES = defaultdict(set)
 
 
-def load_data(info_file: str):
-    global INFO_DATA
-    global DRAWN
-    DRAWN = defaultdict(bool)
-    INFO_DATA = []
-    with open(info_file, "r", encoding="utf-8") as info:
-        for line in info:
-            INFO_DATA.append(line.strip())
-
-
 def load_data2(info_file: str):
+    """Loads data from info file, grouping genes correctly and
+    adding all the generated Gene objects to Species objects"""
     with open(info_file, "r", encoding="utf-8") as info:
         for line in info:
             split_line = line.split(";")
-            eval_3 = eval(split_line[3])
+            eval_3 = literal_eval(split_line[3])
             list_of_group_genes = []
-            eval_5 = eval(split_line[5].strip())
+            eval_5 = literal_eval(split_line[5].strip())
             counter = 0
             for item in eval_5:
                 if item[0] != f"{split_line[1]}|{split_line[2]}":
@@ -176,82 +173,17 @@ def load_data2(info_file: str):
     print("Done reading data!")
 
 
-def create_annotation_line(
-    main_gene: tuple[str, str, tuple[str, int, int, str]],
-    species: str,
-    genes: list[tuple[str, int, int, str]],
-    max_dist_from_left: dict[str, int],
-) -> tuple[str, int]:
-    # Check if swapping is needed
-    for gene in genes:
-        swap = False
-        if check_gene(gene) == "pks":
-            if gene[4] == "-":
-                swap = True
-
-    # reverse gene list if pks is in reverse
-    if swap:
-        genes.reverse()
-
-    # get pks distance from left
-    pks_distance = 1
-    for gene in genes:
-        if check_gene(gene) == "pks":
-            break
-        else:
-            pks_distance += 1
-
-    # make shape at right distance for all genes
-    max_length = 0
-    annotation_entry = f"{species},[length_of_group]"
-    count = 0
-    for gene in genes:
-        distance = (
-            50 + count * 150 + ((max_dist_from_left[main_gene[0]] - pks_distance) * 150)
-        )
-        type_gene = check_gene(gene)
-        if type_gene == "pks":
-            line = f"TR|{distance}|{distance+100}|{get_color(gene[1])}|{gene[1]}"
-        else:
-            shape = get_shape(gene[4], swap)
-            color = get_color(type_gene)
-            line = f"{shape}|{distance}|{distance+100}|{color}|{gene[1]}"
-        max_length = distance
-        annotation_entry = f"{annotation_entry},{line}"
-        count += 1
-        DRAWN[gene[0]] = True
-    annotation_entry = f"{annotation_entry}\n"
-
-    return (annotation_entry, max_length + 150)
-
-
-def replace_placeholder_lengths(
-    annotation_entries: list[str], max_length: int
-) -> list[str]:
-    final_annotation = []
-    for item in annotation_entries:
-        final_annotation.append(item.replace("[length_of_group]", str(max_length)))
-    return final_annotation
-
-
-def get_dist_from_left(
-    all_genes: list[list[tuple[str, int, int, str]]]
-) -> dict[str, int]:
-    max_dist = defaultdict(int)
-    for genes in all_genes:
-        dist = 1
-        for gene in genes:
-            if check_gene(gene) == "pks":
-                if gene[4] == "-":
-                    dist = len(genes) - dist
-                if dist > max_dist[gene[1]]:
-                    max_dist[gene[1]] = dist
-            else:
-                dist += 1
-    return max_dist
-
-
 def get_shape(orientation: str, swap: bool) -> str:
+    """Returns the shape of the gene, based on the
+    orientation of scaffold and if the gene was reversed
+
+    Args:
+        orientation (str): orientation of scaffold
+        swap (bool): if scaffold reversed
+
+    Returns:
+        str: shape of gene for annotation
+    """
     if orientation == "+":
         if swap:
             return "TL"
@@ -262,6 +194,15 @@ def get_shape(orientation: str, swap: bool) -> str:
 
 
 def get_color(type_gene: str) -> str:
+    """Returns color of gene for visualization
+    Colors here are based on different paralogues for different genes
+
+    Args:
+        type_gene (str): paralogue
+
+    Returns:
+        str: hex color code
+    """
     match type_gene:
         case "3hnr":
             return "#0099e0"
@@ -293,31 +234,9 @@ def get_color(type_gene: str) -> str:
             return "#FF97C1"
 
 
-def check_gene(gene: tuple[str, str, int, int, str]) -> str:
-    if (
-        gene[1] == "4thn1"
-        or gene[1] == "4thn2"
-        or gene[1] == "athn"
-        or gene[1] == "ywa1"
-    ):
-        return "pks"
-    if (
-        gene[1] == "ayg13"
-        or gene[1] == "ayg12"
-        or gene[1] == "ayg11"
-        or gene[1] == "yg1"
-        or gene[1] == "cladea"
-    ):
-        return "ayg"
-    if gene[1] == "3hnr" or gene[1] == "4hnr" or gene[1] == "arp2":
-        return "rdt"
-    if gene[1] == "scd1" or gene[1] == "arp1":
-        return "scd"
-    return "unknown"
-
-
 def count_genes():
-    for key, item in SPECIES.items():
+    """Counts the amount of main genes."""
+    for _, item in SPECIES.items():
         counts = [0, 0, 0, 0]
         # 0 = pks, 1 = ayg, 2 = rdt and 3 = scd
         for gene in item.genes:
@@ -332,39 +251,13 @@ def count_genes():
         item.gene_counts = counts
 
 
-def check_gene2(gene: str) -> str:
-    if gene == "4thn1" or gene == "4thn2" or gene == "athn" or gene == "ywa1":
-        return "pks"
-    if (
-        gene == "ayg13"
-        or gene == "ayg12"
-        or gene == "ayg11"
-        or gene == "yg1"
-        or gene == "cladea"
-    ):
-        return "ayg"
-    if gene == "3hnr" or gene == "4hnr" or gene == "arp2":
-        return "rdt"
-    if gene == "scd1" or gene == "arp1":
-        return "scd"
-    return "unknown"
-
-
-def calc_distance_from_left():
-    for file in ANNOTATION_FILES:
-        max_distance = 0
-        for item in ANNOTATION_LINES:
-            if item.file == file:
-                if item.gene.distance > max_distance:
-                    max_distance = item.gene.distance
-
-        for item in ANNOTATION_LINES:
-            item.set_distance_from_left = max_distance
-
-
 def generate_annotation_file(info_file: str, output_path: str):
-    annotation_dict = defaultdict(list)
-    # load_data(info_file)
+    """Generates annotation file
+
+    Args:
+        info_file (str): Info file for input
+        output_path (str): path where output annotation files will be placed
+    """
     load_data2(info_file)
     count_genes()
 
@@ -411,7 +304,7 @@ def generate_annotation_file(info_file: str, output_path: str):
                                 for item in gene.group:
                                     if gene2.identifier == f"{item[1]}|{item[0]}":
                                         gene2.drawn = True
-                            annotation_line = Annotation_Line(gene, key)
+                            annotation_line = AnnotationLine(gene, key)
                             ANNOTATION_LINES.append(annotation_line)
         counter += 1
 
@@ -423,18 +316,18 @@ def generate_annotation_file(info_file: str, output_path: str):
 
     # make lines from line object and write to file
     for line in ANNOTATION_LINES:
-        # if len(line.gene.group) > 1:
         line.set_distance_from_left(left_distances[line.file])
         line.generate_annotation_string()
 
     # prepare output files with headers
     for file in ANNOTATION_FILES.keys():
         with open(
-            f"locus/annotation_{file}.txt", "w", encoding="utf-8"
+            f"{output_path}annotation_{file}.txt", "w", encoding="utf-8"
         ) as prep_output_file:
             prep_output_file.write(
                 "DATASET_DOMAINS\nSEPARATOR"
-                f" COMMA\nDATASET_LABEL,{file}\nCOLOR,#00ff00\nHEIGHT_FACTOR,2.6\nWIDTH,{str(LONGEST_DIST[file])}\n\nDATA\n"
+                f" COMMA\nDATASET_LABEL,{file}\nCOLOR,#00ff00\n"
+                f"HEIGHT_FACTOR,2.6\nWIDTH,{str(LONGEST_DIST[file])}\n\nDATA\n"
             )
 
     # write to output files
@@ -443,44 +336,9 @@ def generate_annotation_file(info_file: str, output_path: str):
             "[length_of_group]", str(LONGEST_DIST[line.file])
         )
         with open(
-            f"locus/annotation_{line.file}.txt", "a", encoding="utf-8"
+            f"{output_path}annotation_{line.file}.txt", "a", encoding="utf-8"
         ) as output_file:
             output_file.write(to_write)
-
-    all_genes = []
-    for item in INFO_DATA:
-        split_item = item.split(";")
-        all_genes.append(eval(split_item[5]))
-
-    max_dist = get_dist_from_left(all_genes)
-    # DEAL WITH DOUBLE COPIES OF SAME PKS GENE THAT ARE SPLIT
-    max_group_length = defaultdict(int)
-    for item in INFO_DATA:
-        split_item = item.split(";")
-        if not DRAWN[f"{split_item[1]}|{split_item[2]}"]:
-            if check_gene(("", split_item[0], 0, 0, "")) == "pks":
-                line, group_length = create_annotation_line(
-                    (split_item[0], split_item[1], split_item[3]),
-                    split_item[1],
-                    eval(split_item[5]),
-                    max_dist,
-                )
-                if group_length > max_group_length[split_item[0]]:
-                    max_group_length[split_item[0]] = group_length
-                annotation_dict[split_item[0]].append(line)
-    for key in annotation_dict.keys():
-        annotation_dict[key] = replace_placeholder_lengths(
-            annotation_dict[key], max_group_length[key]
-        )
-        with open(
-            f"{output_path}annotation_{key}.txt", "w", encoding="utf-8"
-        ) as output:
-            output.write(
-                "DATASET_DOMAINS\nSEPARATOR"
-                f" COMMA\nDATASET_LABEL,{key}\nCOLOR,#00ff00\nHEIGHT_FACTOR,2.6\n\nDATA\n"
-            )
-            for line in annotation_dict[key]:
-                output.write(line)
     print("Done!")
 
 
