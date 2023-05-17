@@ -1,9 +1,10 @@
-# This script creates a fasta file per gene
-# It retrieves the gene ID from the HMMsearch output
-# This gene ID is used to retrieve the location info (scaffold, start, end) from GFF files
-# This location info is used to extract the corresponding sequence
-# Input: .txt file with genes you want to do, HMMsearch output, GFF files and fasta files
-# Output: Fasta file per gene
+""" This script creates a fasta file per gene
+It retrieves the gene ID from the HMMsearch output
+This gene ID is used to retrieve the location info (scaffold, start, end) from GFF files
+This location info is used to extract the corresponding sequence
+Input: .txt file with genes you want to do, HMMsearch output, GFF files and fasta files
+Output: Fasta file per gene
+"""
 
 # Import packages
 import os
@@ -25,7 +26,7 @@ p = re.compile(".*_out_(.*).*")
 
 # Open .txt files with genes you need the sequence from
 # genes = open('/processing/jgi/hmm_intersection/buscos.txt').readlines()
-genes = open("/processing/jgi/buscos_left.txt").readlines()
+genes = open("/processing/jgi/buscos_left.txt", encoding="utf-8").readlines()
 counter = 1
 counter_end = len(genes)
 
@@ -38,7 +39,7 @@ logging.basicConfig(
 logging.getLogger().addHandler(logging.StreamHandler())
 
 # Open species you need the sequence from
-species = open("specieslist_1324.txt").readlines()
+species = open("specieslist_1324.txt", encoding="utf-8").readlines()
 s_counter = 1
 s_counter_end = len(species)
 species_list = []
@@ -56,17 +57,6 @@ def get_gene_name(hmmsearch_output, gene):
                 target_name = split_line[0].strip()
                 id_mrna = f"ID={target_name};"
                 return id_mrna
-
-    """if 'mRNA_' in target_name:
-        gene_ID = target_name.split('RNA_')[1]
-    elif 'mRNA' in target_name and 'mRNA_' not in target_name:
-        gene_ID = target_name.split('RNA')[1]
-    else:
-        #print('ERROR: OTHER TARGET NAME: ', target_name)
-        return target_name
-
-    gene_name = 'ID=gene_' + gene_ID + ';'
-    """
     return target_name
 
 
@@ -91,7 +81,6 @@ def get_location(gff_output, gene_name):
     start = str(int(start) - 1)
 
     fasta_header = ">" + scaffold + ":" + start + "-" + end
-    # print(fasta_header)
     return fasta_header, orientation
 
 
@@ -124,7 +113,7 @@ def get_location_gff(gff_output, gene_name):
     return scaffold, orientation, start, end
 
 
-def get_sequence(g_fasta_output, fasta_header, output_file, orientation, species, gene):
+def get_sequence(g_fasta_output, fasta_header, output_file, orientation, species):
     for i in range(0, len(g_fasta_output) - 1, 2):
         if g_fasta_output[i].strip() == fasta_header:
             output_file.write(f">{species}\n")
@@ -135,7 +124,6 @@ def get_sequence(g_fasta_output, fasta_header, output_file, orientation, species
                 output_file.write(g_fasta_output[i + 1].upper())
                 return
             elif orientation == "-":
-                complement = ""
                 tab = str.maketrans("ACTG", "TGAC")
                 output_file.write(
                     g_fasta_output[i + 1].upper().translate(tab).strip()[::-1] + "\n"
@@ -146,7 +134,7 @@ def get_sequence(g_fasta_output, fasta_header, output_file, orientation, species
 
 
 def get_sequence_gff(
-    g_fasta_output, output_file, scaffold, orientation, start, end, species, gene
+    g_fasta_output, output_file, scaffold, orientation, start, end, species
 ):
     next_line = False
     for line in g_fasta_output:
@@ -218,8 +206,6 @@ def create_fasta_per_gene(gene):
     s_counter = 1
     seq = ""
     for item in species_list:
-        # if "Tubae1" not in item:
-        #    continue
         logging.info("Running for species %s (%s/%s)", item, s_counter, s_counter_end)
         s_counter += 1
         output_file_path = f"{output_path}{gene}.txt"
@@ -259,8 +245,6 @@ def create_fasta_per_gene(gene):
                             get_loc[2],
                             get_loc[3],
                         )
-
-                        # g_fasta_path = "/processing/jgi/nucl/"
                         with open(
                             f"{g_fasta_path}{item}.fasta", "r", encoding="utf-8"
                         ) as g_fasta_output:
@@ -274,13 +258,11 @@ def create_fasta_per_gene(gene):
                                 start,
                                 end,
                                 item,
-                                gene,
                             )
                             output_file.close()
 
 
-# create_fasta_per_gene("13224at4751")
-
-for gene in genes:
-    gene = gene.strip()
-    create_fasta_per_gene(gene)
+if __name__ == "__main__":
+    for item in genes:
+        item = item.strip()
+        create_fasta_per_gene(item)
